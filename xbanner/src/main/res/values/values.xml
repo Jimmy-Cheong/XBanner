@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="XBanner">
+        <attr name="delay_time"
+              format="integer"/>
+        <attr name="is_auto_play"
+              format="boolean"/>
+        <attr name="title_height"
+              format="integer"/>
+        <attr name="indicator_height"
+              format="integer"/>
+        <attr name="indicator_width"
+              format="integer"/>
+
+        <attr name="size_indicator"
+              format="integer"/>
+        <attr name="size_title_text"
+              format="integer"/>
+
+
+        <attr name="color_title"
+              format="color"/>
+        <attr name="indicator_type"
+              format="enum">
+            <enum name="circle_indicator"
+                   value="0"/>
+            <enum name="cube_indicator"
+                  value="1"/>
+            <enum name="num_indicator"
+                  value="2"/>
+            <enum name="no_indicator"
+                  value="3"/>
+            
+        </attr>
+        
+        <attr name="indicator_gravity"
+              format="enum">
+            <enum name="start"
+                  value="0"/>
+            <enum name="center"
+                  value="1"/>
+            <enum name="end"
+                  value="2"/>
+            
+        </attr>
+
+        <attr format="enum"
+            name="banner_type">
+            <enum name="circle_indicator"
+                  value="0"/>
+            <enum name="circle_indicator_title"
+                  value="1"/>
+            <enum name="cube_indicator"
+                  value="2"/>
+            <enum name="num_indicator"
+                  value="3"/>
+            <enum name="num_indicator_title"
+                  value="4"/>
+
+        </attr>
+
+        <attr name="ellipsize_type"
+              format="enum">
+            <enum name="ellipsize_end"
+                  value="0"/>
+            <enum name="ellipsize_marquee"
+                  value="1"/>
+        </attr>
+
+        <attr name="freezesAnimation" format="boolean"/>
+
+    </declare-styleable>
+</resources>
