@@ -100,7 +100,7 @@ public void onDestroy(){
 ## 特性(主要方法)
 |名称|描述|参数
 |----|-----|----|
-|setBannerTypes|设置banner类型|CIRCLE_INDICATOR,***CIRCLE_INDICATOR_TITLE***,CUBE_INDICATOR,***NUM_INDICATOR,NUM_INDICATOR_TITLE***,the default is CIRCLE_INDICATOR|
+|setBannerTypes|设置banner类型|CIRCLE_INDICATOR,***CIRCLE_INDICATOR_TITLE***,CUBE_INDICATOR,***NUM_INDICATOR,NUM_INDICATOR_TITLE***,默认的类型是CIRCLE_INDICATOR|
 |setIndicatorGravity|设置指示器的重心方向|INDICATOR_START,***INDICATOR_CENTER***,INDICATOR_END,___默认的类型是 CENTER___|
 |setUpIndicatorSize|设置指示器的尺寸|int size,***单位为像素，选中和未选中的尺寸都会同时设定***|
 |setUpIndicators|设置指示器选中和未选中时的图片ResourceID|int res_selected,int res_unselected|
