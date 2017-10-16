@@ -15,8 +15,12 @@ XBanner是一个支持无限轮播的广告插件，主要通过viewpager实现�
 
            compile 'com.abby.app:xbanner:1.0.1' //这是支持gif的版本，如果你想要使用gif图片，请在gradle中添加依赖
            compile 'com.abby.app:xbanner:1.5.1' //无gif版本，去除了gif-drawable的依赖，如果你不使用gif图片，请在gradle中添加此依赖
-           //非常感谢 koral--的android-gif-drawable,这是一个高性能的gif加载依赖库
-           //android-gif-drawable已经添加在gif版本中
+           
+           
+           //非常感谢 koral--的android-gif-drawable,这是一个高性能的gif加载依赖库
+           //使用这个库的原因是ImageView配合Glide加载gif图片的性能并不是很好
+           //android-gif-drawable已经添加在gif版本中
+           
     }
     
     
@@ -75,7 +79,7 @@ xbanner.isAutoPlay(false)
       @Override
       /**
        *简单Glide使用方法，当然你可以自己自定义
-       *加载gif图片时，你可以使用内置的loader，当然也可以自己定义
+       *加载gif图片时，可以不用设置loader而使用内置的loader，当然也可以自己定义
        */
       public void loadImages(Context context, String url, ImageView image) {
           Glide.with(context)   
@@ -93,7 +97,7 @@ xbanner.isAutoPlay(false)
 @Override
 public void onDestroy(){  
    super.onDestroy();  
-    xbanner.releaseBanner();// releaseBanner() must be called in onDestroy()
+    xbanner.releaseBanner();// 一定要在onDestoy()中调用releaseBanner()来释放回调
 }
 ```
      
