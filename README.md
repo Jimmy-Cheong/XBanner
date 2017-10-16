@@ -136,6 +136,8 @@ public void onDestroy(){
 * []() must call asGif() when loading gif,no need to set an ImageLoader if so
 * []() must call releaseBanner() in onDestroy()
 * []() to get a better visaul effect,indicator gravity is set to END when in TITLE mode
+* []() supports API 19 and above
+
 
 # License
       Copyright 2017 AbbyJM
