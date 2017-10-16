@@ -132,6 +132,7 @@ public void onDestroy(){
 * []() 一定要调用asGif()如果当前加载的图片是gif图片 
 * []() 一定要在onDestroy()中调用releaseBanner()来释放回调
 * []() 为了获取更好的视觉效果，当我们使用标题的时候指示器重心将设置在末端
+* []() 支持API 19以及更高版本，因为某些API需要更高的版本支持
  
 # License
       Copyright 2017 AbbyJM
