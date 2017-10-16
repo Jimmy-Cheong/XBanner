@@ -1,4 +1,4 @@
-[English](README.md) | **中文版** </br>
+[English](https://github.com/AbbyJM/XBanner) | **中文版** </br>
 XBanner
 =========
 支持无限轮播的广告插件，提供gif支持。
