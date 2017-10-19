@@ -109,12 +109,12 @@ public void onDestroy(){
 ## Feature(Methods)
 |name|description|params
 |----|-----|----|
-|setBannerTypes|set bannertype|CIRCLE_INDICATOR,***CIRCLE_INDICATOR_TITLE***,CUBE_INDICATOR,***NUM_INDICATOR,NUM_INDICATOR_TITLE***,the default is CIRCLE_INDICATOR|
-|setIndicatorGravity|set the gravity of indicators|INDICATOR_START,***INDICATOR_CENTER***,INDICATOR_END,___the default is CENTER___|
-|setUpIndicatorSize|set up the size of indicators|int size,***IN PX,BOTH SELECTED AND UNSELECTED will be set***|
-|setUpIndicators|set up the indicator res|int res_selected,int res_unselected|
-|setEllipsizeType|set the ellipsizetype of the title text|ELLIPSIZE_END,***ELLIPSIZE_MARQUEE***,___the default is END___|
-|setImageScaleType|set the scale type of the image|no params,___Attension,this method must be called before setting up the images___,___the default is FIT_XY___|
+|setBannerTypes|set the type of banner,CIRCLEINDICATOR by default|CIRCLE_INDICATOR,***CIRCLE_INDICATOR_TITLE***,CUBE_INDICATOR,***NUM_INDICATOR,NUM_INDICATOR_TITLE***|
+|setIndicatorGravity|set the gravity of indicators,___CENTER by default___|INDICATOR_START,***INDICATOR_CENTER***,INDICATOR_END|
+|setUpIndicatorSize|set up the size of indicators,***IN PX,BOTH SELECTED AND UNSELECTED will be set***|int indicatorSize|
+|setUpIndicators|set up the indicator resID|int res_selected,int res_unselected|
+|setEllipsizeType|set the ellipsizetype of the title text,,___END by default___|ELLIPSIZE_END,***ELLIPSIZE_MARQUEE***|
+|setImageScaleType|set the scale type of the image,___this method must be called before setting up the images___,___FIT_XY by default___|ImageView.ScaleType scaleType|
 |setScroller|set the scroller of the viewpager|the scroller to be applied
 |setTitlebgAlpha|set the title background to be alpha|no params|
 |setImageRes|set the image resource|int[] res|
@@ -123,16 +123,16 @@ public void onDestroy(){
 |setImageResAndTitles|set the imageres and titles|int[] res,List< String > titles|
 |setImageUrlsAndTitles|set the image urls and titles|List< String > urls,List< String > titles|
 |setPageTransformer|set the transformer for the viewpager|PageTransformer transformer|
-|setDelay|set the interval of the banner when playing|int delay,***IN MS***|
+|setDelay|set the interval of the banner when playing,***IN MS***|int delay|
 |isAutoPlay|indicate if the banner is automatically playing|boolean is autoPlay|
-|setTransformerSpeed|set the transform speed when idle|int speed,***IN MS***|
-|setTitleHeight|set the height of title|int height,***IN PX***|
+|setTransformerSpeed|set the transform speed when idle,***IN MS***|int speed|
+|setTitleHeight|set the height of title,***IN PX***|int height|
 |setBannerPageListener|set the banner listener|BannerPageListener listener|
 |getViewPager|get the viewPager of the banner|no params|
 |asGif|indicate the urls are gif urls|no params|
 |clearGifCache|clear the cache of gifs|no params|
 |autoDeleteGifCache|automatically delete the cache of gifs when reach the the given size|int sizeInMB|
-|start|start the banner|no params,***must be set to start the banner***|
+|start|start the banner,***must be set to start the banner***|no params|
  
 ## Notice
 * []() must set the banner type to TITLE TYPE when we set titles to avoid some logic errors
