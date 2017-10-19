@@ -3,7 +3,7 @@ XBanner
 =========
 This is a banner suppoted gifs and images.无限轮播的广告插件，提供gif支持。
 ## Introduction
-A banner for showing Ads with the Viewpager and supports automatic play in an infinite loop.With XBanner you can customize the style of this banner.XBanner also provides gif supprot,and we use the 3rd party dependency to load gifs for batter perfoemance. 
+A banner for showing Ads with the Viewpager and supports automatic play in an infinite loop.With XBanner you can customize the style of this banner.XBanner also provides gif supprot,and we use the 3rd party dependency to load gifs for better perfoemance. 
 
 ## Effects
 #### The final effect is as the gif below.
