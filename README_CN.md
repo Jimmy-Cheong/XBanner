@@ -103,12 +103,12 @@ public void onDestroy(){
 ## 特性(主要方法)
 |名称|描述|参数
 |----|-----|----|
-|setBannerTypes|设置banner类型|CIRCLE_INDICATOR,***CIRCLE_INDICATOR_TITLE***,CUBE_INDICATOR,***NUM_INDICATOR,NUM_INDICATOR_TITLE***,默认的类型是CIRCLE_INDICATOR|
-|setIndicatorGravity|设置指示器的重心方向|INDICATOR_START,***INDICATOR_CENTER***,INDICATOR_END,___默认的类型是 CENTER___|
-|setUpIndicatorSize|设置指示器的尺寸|int size,***单位为像素，选中和未选中的尺寸都会同时设定***|
+|setBannerTypes|设置banner类型,默认的类型是CIRCLE_INDICATOR|CIRCLE_INDICATOR,***CIRCLE_INDICATOR_TITLE***,CUBE_INDICATOR,***NUM_INDICATOR,NUM_INDICATOR_TITLE***|
+|setIndicatorGravity|设置指示器的重心方向,___默认的类型是 CENTER___|INDICATOR_START,***INDICATOR_CENTER***,INDICATOR_END|
+|setUpIndicatorSize|设置指示器的尺寸,***单位为像素，选中和未选中的尺寸都会同时设定***|int size|
 |setUpIndicators|设置指示器选中和未选中时的图片ResourceID|int res_selected,int res_unselected|
-|setEllipsizeType|设置标题文本的ellipsizetype|ELLIPSIZE_END,***ELLIPSIZE_MARQUEE***,___默认的类型END___|
-|setImageScaleType|设置图片的缩放类型|不需要参数,___注意，这个方法必须在图片设置之前调用，否则会没有效果___,___默认的缩放类型是FIT_XY___|
+|setEllipsizeType|设置标题文本的ellipsizetype,___默认的类型END___|ELLIPSIZE_END,***ELLIPSIZE_MARQUEE***|
+|setImageScaleType|设置图片的缩放类型,___注意，这个方法必须在图片设置之前调用，否则会没有效果___,___默认的缩放类型是FIT_XY___|ImageView.ScaleType scaletype|
 |setScroller|设置scroller|将要设置的scroller
 |setTitlebgAlpha|设置标题的背景为透明|不需要参数|
 |setImageRes|设置图片的resourceID|int[] res|
@@ -117,16 +117,16 @@ public void onDestroy(){
 |setImageResAndTitles|设置图片的resourceID和标题|int[] res,List< String > titles|
 |setImageUrlsAndTitles|设置图片的url和标题|List< String > urls,List< String > titles|
 |setPageTransformer|设置一个transformer给viewpager|PageTransformer transformer|
-|setDelay|设置播放的延迟|int delay,***单位是毫秒***|
-|isAutoPlay|指出banner是否是自动播放|boolean is autoPlay，***默认情况下不自动播放***|
-|setTransformerSpeed|设置未拖拽情况下transformer的切换延迟|int speed,***默认是毫秒***|
-|setTitleHeight|设置标题的高度|int height,***单位是毫秒***|
+|setDelay|设置播放的延迟,***单位是毫秒***|int delay|
+|isAutoPlay|指出banner是否是自动播放，***默认情况下不自动播放***|boolean is autoPlay|
+|setTransformerSpeed,***默认是600毫秒***|设置未拖拽情况下transformer的切换延迟|int speed|
+|setTitleHeight|设置标题的高度,***单位是像素***|int height|
 |setBannerPageListener|设置banner的监听器|BannerPageListener listener|
 |getViewPager|获得banner的viewpager|不需要参数|
 |asGif|指出当前加载的url是不是来自gif图片|不需要参数|
 |clearGifCache|清楚gif的缓存|不需要参数|
 |autoDeleteGifCache|当达到一个阈值时自动清除gif缓存|int sizeInMB|
-|start|banner开始播放|不需要参数,***一定要调用这个方法来开始播放***|
+|start|banner开始播放,***一定要调用这个方法来开始播放***|不需要参数|
  
 ## 注意
 * []() 一定要将banner的类型设置为TITLE类型以避免一些不必要的逻辑错误
