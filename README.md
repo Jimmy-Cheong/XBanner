@@ -28,7 +28,7 @@ dependencies{
 ```
     
 ## Usage
- #### A simple way to use XBanner is like below. //Attension,releaseBanner() must be called in onDestroy()
+ #### A simple way to use XBanner is like below. releaseBanner() must be called in onDestroy()
 
 ```java
 @Override
@@ -47,7 +47,7 @@ xbanner.releaseBanner(); //releaseBanner() must be called in onDestroy()
 }
 ```    
    
- #### A simple way to use XBanner with titles.***Attension,BannerType must be set to TITLE_TYPES when using titles.***
+ #### A simple way to use XBanner with titles.***BannerType must be set to TITLE_TYPES when using titles.***
 ```java
 @Override
 public void onCreate(Bundle savedInstanceState) {
@@ -68,7 +68,7 @@ public void onDestroy(){
 }
 ```
       
-#### If you want to load images from the url,an ImageLoader will be needed.A simple ImageLoader is like below.
+#### If you want to load images from the url,an ImageLoader will be needed.A simple way to use ImageLoader is like below.
 ```java
 @Override
 public void onCreate(Bundle savedInstanceState) {
