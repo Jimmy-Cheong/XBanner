@@ -16,8 +16,7 @@ public  class GifImageLoader implements ImageLoader {
      */
     @Override
     public void loadGifs(String url, GifImageView gifImageView,ImageView.ScaleType scaleType){
-        GifDownloader.displayImage(url,gifImageView,scaleType);
-
+        GifDownloadManager.downloagGif(url,gifImageView,scaleType);
     }
 
     @Override
