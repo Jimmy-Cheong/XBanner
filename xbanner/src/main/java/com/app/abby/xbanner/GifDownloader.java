@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 
 import java.net.URL;
@@ -27,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
-
+import com.app.abby.xbanner.GifDownloadManager.*;
 /**
  * Created by Abby on 10/6/2017.
  * @author Abby
@@ -35,7 +36,7 @@ import pl.droidsonroids.gif.GifImageView;
 
 public class GifDownloader {
 
-
+    private static String LOG_TAG="GifDownloader";
     private static Handler mHandler;
     private static Runnable mRunnable;
     private static String path;
@@ -47,13 +48,26 @@ public class GifDownloader {
     private static final int QUEUE_SIZE=64;
     private static final int SHORTEST_FILE_NAME=5;
     private static final String TEM_FILE_END=".tmp";
+
+
+    private static  ThreadFactory THREAD_FACTORY = new ThreadFactory() {
+        private final AtomicInteger mCount = new AtomicInteger(0);
+        @Override
+        public Thread newThread(@NonNull Runnable r) {
+
+            return new Thread(r, "Runnable #" + mCount.getAndIncrement());
+        }
+    };
     //delete the cache in the root path
     private static String deletePath;
+
+    private static ProgressListener mProgressListener;
     public static void displayImage(final String url, final GifImageView gifView, final ImageView.ScaleType scaleType){
         String md5Url = getMd5(url);
-        path = gifView.getContext().getCacheDir().getAbsolutePath()+"/"+md5Url;  //file with .tmp still downloading
+        //file with .tmp still downloading
+        path = gifView.getContext().getCacheDir().getAbsolutePath()+"/"+md5Url;
         deletePath=gifView.getContext().getCacheDir().getAbsolutePath();
-        Log.d("GifHelper","the cache dir is"+path);
+        Log.d(LOG_TAG,"the cache dir is"+path);
         final File cacheFile = new File(path);
 
         final WeakReference<GifImageView> gifImage=new WeakReference<>(gifView);
@@ -62,7 +76,7 @@ public class GifDownloader {
         //then we load it from the local file
         if(cacheFile.exists()){
             displayImage(cacheFile,gifImage.get(),scaleType);
-            Log.d("GifHelper","the gif "+path+ " was cached before");
+            Log.d(LOG_TAG,"the gif "+path+ " was cached before");
             return;
         }
 
@@ -70,14 +84,16 @@ public class GifDownloader {
         startDownLoad(url, newFile, new AbstractDownLoadTask() {
             @Override
             void onStart() {
-                Log.d("GifDownloader","now start download");
+                Log.d(LOG_TAG,"now start download");
             }
             @Override
             void onLoading(long total, long current) {
 
+
                 int progress=(int)(current*100/total);
-                Log.d("GifDownloader","now the download of "+path+ " has finished "+progress+"%");
+                Log.d(LOG_TAG,"now the download of "+path+ " has finished "+progress+"%");
                 showFirstFrame(newFile,gifImage.get());
+
             }
 
             @Override
@@ -91,7 +107,7 @@ public class GifDownloader {
                 }
                 File downloadFile = new File(path);
                 File renameFile = new File(path.substring(0,path.length()-4));//remove .tmp
-                Log.d("GifHelper","download success,the path of file is "+path+" rename to be "+renameFile.getAbsolutePath());
+                Log.d(LOG_TAG,"download success,the path of file is "+path+" rename to be "+renameFile.getAbsolutePath());
                 if(path.endsWith(TEM_FILE_END)){
                     downloadFile.renameTo(renameFile);
                 }
@@ -102,7 +118,7 @@ public class GifDownloader {
             @Override
             void onFailure(Throwable e) {
                 e.printStackTrace();
-                Log.d("GifDownloader","image download failed");
+                Log.d(LOG_TAG,"image download failed");
             }
         });
 
@@ -183,32 +199,30 @@ public class GifDownloader {
         };
         //new Thread(mRunnable).start();  avoid using this method to create a thread,may reduce performance
         initThreadPool();
+        threadExecutor.execute(mRunnable);
+
     }
 
-    private static final ThreadFactory THREAD_FACTORY = new ThreadFactory() {
-        private final AtomicInteger mCount = new AtomicInteger(1);
 
-        @Override
-        public Thread newThread(@NonNull Runnable r) {
-            return new Thread(r, "Runnable #" + mCount.getAndIncrement());
-        }
-    };
 
 
     private static void initThreadPool(){
+
         if(threadExecutor==null){
             threadExecutor=new ThreadPoolExecutor(CORE_POOL_SIZE,MAX_POOL_SIZE,THREAD_ALIVE_TIME, TimeUnit.SECONDS,new ArrayBlockingQueue<Runnable>(QUEUE_SIZE),THREAD_FACTORY);
         }
-        threadExecutor.execute(mRunnable);
-        Log.d("GifDownloader","thread size is "+threadExecutor.getPoolSize());
-        Log.d("GifDownloader","tasks being executing count "+threadExecutor.getQueue().size());
-        Log.d("GifDownloader","tasks run complete count "+threadExecutor.getCompletedTaskCount());
+
+        Log.d(LOG_TAG,"thread size is "+threadExecutor.getPoolSize());
+        Log.d(LOG_TAG,"tasks being executing count "+threadExecutor.getQueue().size());
+        Log.d(LOG_TAG,"tasks run complete count "+threadExecutor.getCompletedTaskCount());
+
     }
 
 
     public static void shutdownThreadPool(){
         if(threadExecutor!=null&&!threadExecutor.isShutdown()){
             threadExecutor.shutdown();
+
         }
     }
 
@@ -239,7 +253,7 @@ public class GifDownloader {
 
                 final int responseCode = httpURLConnection.getResponseCode();
                 if (HttpURLConnection.HTTP_OK == responseCode) {
-                    Log.d("GifDownload","response OK");
+                    Log.d(LOG_TAG,"response OK");
                     bis = new BufferedInputStream(httpURLConnection.getInputStream());
                     result = httpURLConnection.getExpiration();
                     result = result < System.currentTimeMillis() ? System.currentTimeMillis() + 40000 : result;
@@ -260,6 +274,15 @@ public class GifDownloader {
                 currCount+=len;
                 final long finalFileLen=fileLen;
                 final long finalCurrCount=currCount;
+
+
+                String name= Thread.currentThread().getName();
+                int index=Integer.parseInt(name.substring(name.length()-1));
+                int progress=(int)(finalCurrCount*100/finalFileLen);
+                mProgressListener.showProgress(index,progress);
+                Log.e(LOG_TAG,"the thread id is "+index+" and the progress is "+(int)(finalCurrCount*100/finalFileLen));
+
+
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -271,8 +294,8 @@ public class GifDownloader {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
+                    //we have to update view in the main thread,so handler is needed
                     task.onSuccess(targetFile);
-
                 }
             });
 
@@ -306,7 +329,7 @@ public class GifDownloader {
             if(!canSeekForward){
                 return;
             }
-            Log.d("GifHelper","the first frame can be show");
+            Log.d(LOG_TAG,"the first frame can be show");
             gifFromFile.seekToFrame(0);
             gifFromFile.pause();
             imageView.setImageDrawable(gifFromFile);
@@ -352,13 +375,36 @@ public class GifDownloader {
     public static boolean autoDeleteGifCache(int sizeMB) {
 
         double size=FileSizeUtil.getFileOrFilesSize(deletePath,3);
-        Log.d("GifDownloader","the cache size is "+size+" MB");
+        Log.d(LOG_TAG,"the cache size is "+size+" MB");
         if(size>=sizeMB){
-            Log.d("GifDownloader","cache cleared,total size: "+size+"MB");
+            Log.d(LOG_TAG,"cache cleared,total size: "+size+"MB");
            return delete(new File(deletePath));
         }
         return false;
     }
 
+
+
+    public static void setProgressListener(ProgressListener listener){
+        mProgressListener=listener;
+    }
+
+
+    public static void releaseDownloader(){
+        mProgressListener=null;
+        THREAD_FACTORY=null;
+        mRunnable=null;
+        if(threadExecutor!=null){
+            try {
+                Field f=ThreadPoolExecutor.class.getDeclaredField("threadFactory");
+                f.setAccessible(true);
+                f.set(threadExecutor,null);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        shutdownThreadPool();
+        threadExecutor=null;
+    }
 
 }
