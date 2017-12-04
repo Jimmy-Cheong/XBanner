@@ -3,9 +3,10 @@ package com.app.abby.xbanner;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+
+
 import android.os.Handler;
 import android.support.annotation.IntDef;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -16,13 +17,17 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
+
 import android.view.animation.DecelerateInterpolator;
+
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
 import android.widget.TextView;
+
+
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -36,7 +41,10 @@ import pl.droidsonroids.gif.GifImageView;
 /**
  * Created by Abby on 9/22/2017.
  * @author Abby
+ * email: 1358890401@qq.com
+ *
  */
+
 
 public class XBanner extends RelativeLayout{
 
@@ -54,7 +62,7 @@ public class XBanner extends RelativeLayout{
     //transform delay set to 250ms when dragging
     public static final int PAGE_TRANSFORM_DELAY_DRAGGING=250;
 
-    //indicator types
+    //indicator gravity types
     public static final int INDICATOR_START=0;
     public static final int INDICATOR_CENTER=1;
     public static final int INDICATOR_END=2;
@@ -69,6 +77,12 @@ public class XBanner extends RelativeLayout{
     //ellipsize types
     public static final int ELLIPSIZE_END=0;
     public static final int ELLIPSIZE_MARQUEE=1;
+
+    //loaing progress view types
+    public static final int TEXT_PROGRESS=0;
+    public static final int CIRCLE_PROGRESS=1;
+
+
 
     private Context mContext;
     private int mTitleHeight;
@@ -89,14 +103,18 @@ public class XBanner extends RelativeLayout{
     private int mGravity;
     private int mImageCount;
     private int mBannerType;
+    private int mProgressType;
     private int mEllipsizeType;
-
+    private RelativeLayout mBannerParentView;
     private ImageView.ScaleType mScaleType;
+    private DisplayMetrics dm;
 
-    private XBannerViewPager mViewPager;
+    private ViewPager mViewPager;
+    private XBPagerAdapter mAdapter;
     private ViewPager.PageTransformer mViewPageTransformer;
     private TextView mBannerTitle;
-
+    private TextView mTextProgress;
+    private RingProgressBar mCircleProgress;
     private TextView mNumIndicator;
     private List<ImageView> mIndicators;
     private List<View> mBannerImages;
@@ -108,9 +126,14 @@ public class XBanner extends RelativeLayout{
 
     private static Handler mHandler=new Handler();
     private Scroller mScroller;
-    //XBannerScroller will be applied by default
+    //xbannerScroller will be applied by default
     private  XBannerScroller xbannerScroller;
     private ViewPagerRunnable mRunnable;
+
+    private int mSelectedIndex=1;
+
+
+    private boolean[] downloadFinished;
 
     public XBanner(Context context){
         super(context);
@@ -131,6 +154,8 @@ public class XBanner extends RelativeLayout{
         mContext=context;
         initValues();
         getTypeArrayValue(context,attrs);
+
+
     }
 
     /**
@@ -148,7 +173,7 @@ public class XBanner extends RelativeLayout{
     }
 
     /**
-     * Set the banner type here
+     * Set the indicator type here
      */
     @IntDef({CIRCLE_INDICATOR,CIRCLE_INDICATOR_TITLE,CUBE_INDICATOR,NUM_INDICATOR,NUM_INDICATOR_TITLE})
     @Retention(RetentionPolicy.SOURCE)
@@ -177,7 +202,6 @@ public class XBanner extends RelativeLayout{
         TypedArray typedArray=context.obtainStyledAttributes(attr,R.styleable.XBanner);
 
         mIndicatorWidth=typedArray.getDimensionPixelSize(R.styleable.XBanner_indicator_width,mIndicatorSize);
-        mIndicatorWidth=typedArray.getDimensionPixelSize(R.styleable.XBanner_indicator_width,mIndicatorSize);
         mTitleHeight=typedArray.getDimensionPixelSize(R.styleable.XBanner_title_height,titleHeight);
         mDelayTime=typedArray.getInteger(R.styleable.XBanner_delay_time,delayTime);
         mIsAutoPlay=typedArray.getBoolean(R.styleable.XBanner_is_auto_play,false);
@@ -185,11 +209,12 @@ public class XBanner extends RelativeLayout{
         mGravity=typedArray.getInteger(R.styleable.XBanner_indicator_gravity,INDICATOR_CENTER);
         mColorTitle=typedArray.getColor(R.styleable.XBanner_color_title, Color.WHITE);
         typedArray.recycle();
+
     }
 
     private void initValues(){
 
-        DisplayMetrics dm = mContext.getResources().getDisplayMetrics();
+        dm= mContext.getResources().getDisplayMetrics();
         mIndicatorSize= dm.widthPixels/80;
         mIndicatorHeight=mIndicatorSize;
         mIndicatorWidth=mIndicatorSize;
@@ -213,21 +238,22 @@ public class XBanner extends RelativeLayout{
         mIsTitlebgAlpha=false;
         mIndicatorSet=false;
 
+        mProgressType=-1;
 
     }
 
     private void initView(){
+
         bindView();
         //Need to set banner type to title types to avoid some logic errors
+
         String exceptionTitle="XBanner: "+"Banner type must be set to CIRCLE_INDICATOR_TITLE or NUM_INDICATOR_TITLE to set titles"+",the default banner type is set to CIRCLE_INDICATOR.";
         initScroller();
-        if(mBannerType==CIRCLE_INDICATOR_TITLE){
-           initViewforTitleType();
-        }else if (mBannerType==NUM_INDICATOR_TITLE){
+        if(mBannerType==CIRCLE_INDICATOR_TITLE||mBannerType==NUM_INDICATOR_TITLE){
            initViewforTitleType();
         } else if(mTitles.size()>0){
             throw new RuntimeException(exceptionTitle);
-    }
+        }
         initIndicatorContainer();
         initViewPagerAdapter();
     }
@@ -240,10 +266,14 @@ public class XBanner extends RelativeLayout{
 
 
     /**
+     * init Scroller
      * Change the speed of the scroller
      * to apply your scroller
      * use {@link #setScroller(Scroller scroller)}
+     *
      */
+
+
     private void initScroller(){
 
         try {
@@ -263,6 +293,17 @@ public class XBanner extends RelativeLayout{
     }
 
 
+    private void removeScroller(){
+        try {
+            Field xScroller=ViewPager.class.getDeclaredField("mScroller");
+            xScroller.setAccessible(true);
+            xScroller.set(mViewPager,null);
+            xbannerScroller=null;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public XBanner setScroller(Scroller scroller){
         mScroller=scroller;
         return this;
@@ -273,6 +314,7 @@ public class XBanner extends RelativeLayout{
      * but if you need to customize your gif loader,do it
      * use {@link #setImageLoader(ImageLoader imageloader)}
      * remember to call asGif() before you set your gif loader
+     *
      */
     public XBanner asGif( ){
         mIsGif=true;
@@ -281,6 +323,17 @@ public class XBanner extends RelativeLayout{
         return this;
     }
 
+    @IntDef({TEXT_PROGRESS,CIRCLE_PROGRESS})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface PROGRESS_TYPE{}
+    public XBanner setLoadingProgressType(@PROGRESS_TYPE int type){
+        mProgressType=type;
+        downloadFinished=new boolean[mImageCount+1];
+        for(int i=0;i<mImageCount;i++){
+            downloadFinished[i]=false;
+        }
+        return this;
+    }
 
     /**
      *Called to make the title background to be alpha
@@ -294,6 +347,7 @@ public class XBanner extends RelativeLayout{
      * Attention,this method must be called before the images set
      * or it does not work
      * the default scale type is FIT_XY
+     *
      */
     public XBanner setImageScaleType(ImageView.ScaleType scaleType){
         mScaleType=scaleType;
@@ -368,8 +422,33 @@ public class XBanner extends RelativeLayout{
     }
 
 
+    /**
+     * load gifs from the resourceID
+     * @param gifs the gif resource id
+     */
+    public XBanner setGifRes(int[] gifs){
+        mImageCount=gifs.length;
+        if(mImageCount>1){
+            mBannerImages.add(newGifImageFroRes(gifs[mImageCount-1]));
+            for(int i=0;i<mImageCount;i++){
+                mBannerImages.add(newGifImageFroRes(gifs[i]));
+            }
+            mBannerImages.add(newGifImageFroRes(gifs[0]));
+        }else {
+            mBannerImages.add(newGifImageFroRes(gifs[0]));
+        }
+        return this;
+    }
 
 
+
+
+    private GifImageView newGifImageFroRes(int res){
+        GifImageView gif=new GifImageView(mContext);
+        gif.setImageResource(res);
+        gif.setScaleType(mScaleType);
+        return gif;
+    }
 
     private ImageView newImageFromRes(int res){
         ImageView image=new ImageView(mContext);
@@ -395,6 +474,12 @@ public class XBanner extends RelativeLayout{
 
     public XBanner setImageResAndTitles(int[] imageRes,List<String> titles){
         setImageRes(imageRes);
+        setTitles(titles);
+        return this;
+    }
+
+    public XBanner setGifImageResAndTitles(int[] gifs,List<String> titles){
+        setGifRes(gifs);
         setTitles(titles);
         return this;
     }
@@ -429,6 +514,7 @@ public class XBanner extends RelativeLayout{
      * but when dragging,it should be a smaller number
      * if you prefer to set your scroller
      * use {@link #setScroller(Scroller scroller)}
+     *
      */
 
     public XBanner setTransformerSpeed(int speed){
@@ -458,6 +544,7 @@ public class XBanner extends RelativeLayout{
      * the width and height can be set
      * @param selected the res of indicator when selected
      * @param unselected the res of indicator when unselected
+     *
      */
 
     public XBanner setUpIndicators(int selected,int unselected){
@@ -488,7 +575,7 @@ public class XBanner extends RelativeLayout{
     /**
      *Get the viewpager
      */
-    public XBannerViewPager getViewPager(){
+    public ViewPager getViewPager(){
         return mViewPager;
     }
 
@@ -557,31 +644,44 @@ public class XBanner extends RelativeLayout{
     }
 
     private void bindView(){
-        View view=LayoutInflater.from(mContext).inflate(R.layout.xbanner,this,true);
-        mViewPager=(XBannerViewPager)view.findViewById(R.id.viewpager);
-        mIndicatorContainer =(LinearLayout)view.findViewById(R.id.indicator_container);
+        mBannerParentView=(RelativeLayout)LayoutInflater.from(mContext).inflate(R.layout.xbanner,this,true);
+        mViewPager=(ViewPager)mBannerParentView.findViewById(R.id.viewpager);
+        mIndicatorContainer =(LinearLayout)mBannerParentView.findViewById(R.id.indicator_container);
         if(mIsTitlebgAlpha){
             mIndicatorContainer.setBackgroundColor(Color.TRANSPARENT);
         }
+
     }
 
 
     private void initViewPagerAdapter(){
 
-        XBPagerAdapter mAdapter = new XBPagerAdapter();
+        if(mAdapter==null){
+            mAdapter= new XBPagerAdapter(mBannerPageListner,mImageCount);
+        }
         mViewPager.setAdapter(mAdapter);
         mAdapter.setData(mBannerImages);
-        mViewPager.setCurrentItem(1);
+        if(mImageCount>1){
+            mViewPager.setCurrentItem(1);
+        }else {
+            mViewPager.setCurrentItem(0);
+            mSelectedIndex=0;
+        }
+
+
+
         if(mViewPageTransformer!=null){
             mViewPager.setPageTransformer(false,mViewPageTransformer);
         }
+
+
     }
 
     /**
      * Get the true position of the indicator
      * @param pos the pos of the viewpager now
      */
-    private int getTruePos(int pos){
+    private  int getTruePos(int pos){
         //get the position of the indicator
         int truepos=(pos-1)%mImageCount;
         if(truepos<0){
@@ -590,13 +690,32 @@ public class XBanner extends RelativeLayout{
         return truepos;
     }
 
+
+
+    private int getindexforProgress(int pos){
+        int index=pos;
+        if(pos==mImageCount+1){
+            index=1;
+        }
+        if(pos==0){
+            index=mImageCount;
+        }
+
+        return index;
+
+    }
+
     /**
      * Config the viewpager listener to the viewpager
      * Only if the image count is greater than 1
      */
     private void applyViewPagerAdapterListener(){
 
-        if(mImageCount>1){
+
+            if(mImageCount<=1){
+                return;
+            }
+
             mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -606,6 +725,7 @@ public class XBanner extends RelativeLayout{
                 @Override
                 public void onPageSelected(int position) {
                     onIndicatorChange(position);
+                    mSelectedIndex=getindexforProgress(position);
                 }
 
                 @Override
@@ -647,7 +767,7 @@ public class XBanner extends RelativeLayout{
                     }
                 }
             });
-        }
+
 
     }
 
@@ -713,11 +833,17 @@ public class XBanner extends RelativeLayout{
         mNumIndicator.setText(i+"/"+mImageCount);
     }
 
+    /**
+     * start this banner
+     */
     public void start(){
 
         checkImageAndTitleNum();
         loadFromUrlsIfNeeded();
         initView();
+        if(mIsGif&&mProgressType!=-1){
+            setUpGifProgress();
+        }
         showIndicators();
         applyViewPagerAdapterListener();
         startPlayIfNeeded();
@@ -729,6 +855,7 @@ public class XBanner extends RelativeLayout{
         if(mIsAutoPlay){
             mIsPlaying=true;
             mRunnable=new ViewPagerRunnable(mViewPager,mImageCount,mDelayTime);
+
             mHandler.postDelayed(mRunnable,mDelayTime);
         }
     }
@@ -739,6 +866,76 @@ public class XBanner extends RelativeLayout{
         }
     }
 
+    private void setUpGifProgress(){
+
+        RelativeLayout.LayoutParams params=new RelativeLayout.LayoutParams(dm.widthPixels/12, dm.widthPixels/12);
+        params.addRule(CENTER_HORIZONTAL);
+        params.addRule(CENTER_VERTICAL);
+        if(mProgressType==TEXT_PROGRESS){
+            mTextProgress=new TextView(mContext);
+            mTextProgress.setTextColor(Color.WHITE);
+            mBannerParentView.addView(mTextProgress,params);
+            mTextProgress.setVisibility(GONE);
+        }else if(mProgressType==CIRCLE_PROGRESS){
+            mCircleProgress=new RingProgressBar(mContext);
+            mCircleProgress.setStyle(RingProgressBar.FILL);
+            mCircleProgress.setRingColor(Color.WHITE);
+            mBannerParentView.addView(mCircleProgress,params);
+            mCircleProgress.setVisibility(GONE);
+        }
+
+        GifDownloader.setProgressListener(new GifDownloadManager.ProgressListener() {
+            /**
+             * Show the progress according to the download thread name.
+             * Since we download all the image synchronously,we will probably hava more than one progress.
+             * The progressView can be accessed and written in multiple threads,so no need to use synchronized.
+             * but we just show the progress of the current item
+             */
+            @Override
+            public void showProgress(final int index, final int progress) {
+
+
+                //we need to update view in the main thread
+                if(index==mSelectedIndex){
+                    if(mProgressType==TEXT_PROGRESS){
+                        mTextProgress.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mTextProgress.setText(progress+"%");
+                                if(downloadFinished[index] || progress==100){
+                                    mTextProgress.setVisibility(GONE);
+                                }else {
+                                    mTextProgress.setVisibility(VISIBLE);
+                                }
+                            }
+                        });
+                    }else if(mProgressType==CIRCLE_PROGRESS){
+
+                        mCircleProgress.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mCircleProgress.setProgress(progress);
+                                if(progress==100 || downloadFinished[index]){
+                                    mCircleProgress.setVisibility(GONE);
+                                }else{
+                                    mCircleProgress.setVisibility(VISIBLE);
+                                }
+                            }
+                        });
+                    }
+
+                }
+
+                if(progress==100){
+                    downloadFinished[index]=true;
+                }
+
+            }
+        });
+    }
+
+
+
     /**
      * check the number of titles and images
      * titles and images must have the same size to avoid some logic error
@@ -748,7 +945,8 @@ public class XBanner extends RelativeLayout{
         if(mImageCount!=mTitles.size()&&(mBannerType==CIRCLE_INDICATOR_TITLE||mBannerType==NUM_INDICATOR_TITLE)){
             throw new RuntimeException("image size and title size is not the same\n"
                         +"size of images: "+mImageCount+"\n"
-                        +"size of titles: "+mTitles.size());
+                        +"size of titles: "+mTitles.size()+"\n"
+                        +"if you do Not need titles,please set the banner type to non-title type");
         }
     }
 
@@ -764,11 +962,16 @@ public class XBanner extends RelativeLayout{
         }
 
         if(mBannerImages.isEmpty()&&!mUrls.isEmpty()){
-            mBannerImages.add(mIsGif?newGifFromUrl(mImageCount-1):newImageFroUrl(mImageCount-1));
-            for(int i=0;i<mUrls.size();i++){
-                mBannerImages.add(mIsGif?newGifFromUrl(i):newImageFroUrl(i));
+            if(mImageCount>1){
+                mBannerImages.add(mIsGif?newGifFromUrl(mImageCount-1):newImageFroUrl(mImageCount-1));
+                for(int i=0;i<mUrls.size();i++){
+                    mBannerImages.add(mIsGif?newGifFromUrl(i):newImageFroUrl(i));
+                }
+                mBannerImages.add(mIsGif?newGifFromUrl(0):newImageFroUrl(0));
+            }else{
+                mBannerImages.add(mIsGif?newGifFromUrl(0):newImageFroUrl(0));
             }
-            mBannerImages.add(mIsGif?newGifFromUrl(0):newImageFroUrl(0));
+
         }
 
     }
@@ -795,13 +998,15 @@ public class XBanner extends RelativeLayout{
 
 
     /**
-     *
+     * the listener interface for banner event,includeing clicked,dragging and idled
+     * the index starts from 0,which item's value starts from 0
      */
     public interface BannerPageListener{
         void onBannerClick(int item);
         void onBannerDragging(int item);
         void onBannerIdle(int item);
     }
+
 
 
     public XBanner setBannerPageListener(BannerPageListener listener){
@@ -844,6 +1049,9 @@ public class XBanner extends RelativeLayout{
             }
 
         }
+
+
+
     }
 
     @Override
@@ -866,82 +1074,60 @@ public class XBanner extends RelativeLayout{
 
     //release banner here
     public void releaseBanner(){
+
+        if(mBannerImages!=null){
+            mBannerImages.clear();
+        }
+
+        if(mIndicators!=null){
+            mIndicators.clear();
+        }
+
+        if(mBannerParentView!=null){
+            mBannerParentView.removeAllViews();
+            mBannerParentView=null;
+        }
         mHandler.removeCallbacks(mRunnable);
+        mRunnable=null;
+
+        removeScroller();
         if(mIsGif){
-            GifDownloader.shutdownThreadPool();
+            GifDownloader.releaseDownloader();
         }
+
+        mAdapter.releaseAdapter();
+        mAdapter=null;
+        mBannerPageListner=null;
+        mImageLoader=null;
+
+
+        mViewPager.setAdapter(null);
+
+        mCircleProgress=null;
+        mTextProgress=null;
+        try {
+            Field f=ViewPager.class.getDeclaredField("mOnPageChangeListeners");
+            f.setAccessible(true);
+            f.set(mViewPager,null);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+        mViewPager.removeAllViews();
+        mViewPager=null;
+
+
+        //Since there may be a number of images or gif in the memory,
+        //consider starting a gc to clean the images in the memory,
+        //before calling a gc,we need to remove the reference of images manually
+        //and we also do something else to release the objects
+        System.gc();
+        System.runFinalization();
+
     }
 
-
-    private class XBPagerAdapter extends PagerAdapter {
-        List<View> mData;
-
-        public XBPagerAdapter(List<ImageView> data){
-            mData=new ArrayList<>();
-            mData.addAll(data);
-        }
-
-        XBPagerAdapter(){
-            mData=new ArrayList<>();
-        }
-
-        /**
-         * Add data,will not clear the data already exists
-         * @param data the ImageViews to be added
-         */
-        public void addData(List<View> data){
-            if(mData!=null){
-                mData.addAll(data);
-                notifyDataSetChanged();
-            }
-        }
-
-        /**
-         * Reset the data
-         */
-        public void setData(List<View> data){
-
-            if(mData!=null){
-                mData.clear();
-                mData.addAll(data);
-                notifyDataSetChanged();
-            }
-
-        }
-        @Override
-        public boolean isViewFromObject(View view,Object object){
-            return view==object;
-        }
-
-
-        @Override
-        public int getCount(){
-            return mData.size();
-        }
-
-
-        @Override
-        public Object instantiateItem(ViewGroup container, final int position) {
-            container.addView(mData.get(position));
-            View view=mData.get(position);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(mBannerPageListner!=null){
-                        mBannerPageListner.onBannerClick(getTruePos(position));
-                    }
-                }
-            });
-            return mData.get(position);
-        }
-
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView(mData.get(position));
-        }
-
-    }
 
 
     /**
@@ -954,10 +1140,12 @@ public class XBanner extends RelativeLayout{
     /**
      *auto delete the cache when cache size is greater than sizeMB
      * @param sizeMB the top size of cache
+     *
      */
     public void autoDeleteGifCache(int sizeMB){
         GifDownloader.autoDeleteGifCache(sizeMB);
     }
+
 
 
 }
