@@ -17,13 +17,11 @@ A banner for showing Ads with the Viewpager and supports automatic play in an in
 ```java
 dependencies{
 
-  compile 'com.abby.app:xbanner:1.0.1' //Gif supported version.If you use gif,contain this in your project.
-  compile 'com.abby.app:xbanner:1.5.1' //Version without gif dependency.If you don't use gif,use this version.
-  
+  compile 'com.abby.app:xbanner:1.5.2' //the latest version
   
   //Thans koral-- for android-gif-drawable,it's a good solution for showing gif images.It is high performance.
   //Instead of using ImageView+Glide,we use gif-drawable for better performance
-  //The dependency 'pl.droidsonroids.gif:android-gif-drawable:1.2.8' was added in the gif version.
+  //The dependency 'pl.droidsonroids.gif:android-gif-drawable:1.2.8' was added in this project.
 }
 ```
     
@@ -105,6 +103,23 @@ public void onDestroy(){
     xbanner.releaseBanner();// releaseBanner() must be called in onDestroy()
 }
 ```
+
+### A simple way to load gifs
+```java
+@Override
+public void onCreate(Bundle savedInstanceState) {
+    banner.setImageUrls(gifUrls)
+    .asGif()
+    .setLoadingProgressType(XBanner.CIRCLE_PROGRESS)  //now you can apply a loading progress view here
+    .start();
+}
+
+@Override
+public void onDestroy(){  
+   super.onDestroy();  
+    xbanner.releaseBanner();// releaseBanner() must be called in onDestroy()
+}
+```
      
 ## Feature(Methods)
 |name|description|params
@@ -133,16 +148,22 @@ public void onDestroy(){
 |clearGifCache|clear the cache of gifs|no params|
 |autoDeleteGifCache|automatically delete the cache of gifs when reach the the given size|int sizeInMB|
 |start|start the banner,***must be set to start the banner***|no params|
+|setLoadingProgressType|set a progress view when loading gifs|CIRCLE_PROGRESS or TEXT_PROGRESS|
  
 ## Notice
 * []() must set the banner type to TITLE TYPE when we set titles to avoid some logic errors
 * []() setImageScaleType must be called before we set the images
 * []() set an ImageLoader when loading images from url,but if you are loading gifs,you don't really have to 
-* []() must call asGif() when loading gif,no need to set an ImageLoader if so
+* []() must call asGif() after you set the Url with setImageUrls method when loading gif,no need to set an ImageLoader if so
 * []() must call releaseBanner() in onDestroy()
 * []() to get a better visaul effect,indicator gravity is set to END when in TITLE mode
 * []() supports API 19 and above
 
+
+## Update
+#### v1.5.2:
+* []() new method setLoadingProgressType(int type) to apply a progress view when loading gifs,while it needs a long time load gifs.
+* []() optimize the momory consumption and the process of downloading gifs
 
 # License
       Copyright 2017 AbbyJM
