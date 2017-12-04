@@ -13,13 +13,11 @@ XBanner是一个支持无限轮播的广告插件，主要通过viewpager实现�
 ## Gradle 
 ```java
 dependencies{
-  compile 'com.abby.app:xbanner:1.0.1' //这是支持gif的版本，如果你想要使用gif图片，请在gradle中添加依赖
-  compile 'com.abby.app:xbanner:1.5.1' //无gif版本，去除了gif-drawable的依赖，如果你不使用gif图片，请在gradle中添加此依赖
-
-
+  compile 'com.abby.app:xbanner:1.5.2' //最新版本
+  
   //非常感谢 koral--的android-gif-drawable,这是一个高性能的gif加载依赖库
   //使用这个库的原因是ImageView配合Glide加载gif图片的性能并不是很好
-  //android-gif-drawable已经添加在gif版本中   
+  //android-gif-drawable已经添加在本项目中 
 }
 ```   
     
@@ -100,6 +98,25 @@ public void onDestroy(){
 }
 ```
      
+## 加载gif的简单示例 
+```java
+@Override
+public void onCreate(Bundle savedInstanceState) {
+    banner.setImageUrls(gifUrls)
+    .asGif()
+    .setLoadingProgressType(XBanner.CIRCLE_PROGRESS)  //这里可以设置gif加载动画
+                                                      //可以是圆形加载动画CIRCLE_PROGRESS或者文本加载进度TEXT_PROGRESS
+    .start();
+}
+
+@Override
+public void onDestroy(){  
+   super.onDestroy();  
+    xbanner.releaseBanner();// releaseBanner() must be called in onDestroy()
+}
+```
+
+
 ## 特性(主要方法)
 |名称|描述|参数
 |----|-----|----|
@@ -127,6 +144,7 @@ public void onDestroy(){
 |clearGifCache|清楚gif的缓存|不需要参数|
 |autoDeleteGifCache|当达到一个阈值时自动清除gif缓存|int sizeInMB|
 |start|banner开始播放,***一定要调用这个方法来开始播放***|不需要参数|
+|setLoadingProgressType|设置加载gif图片时的加载动画|CIRCLE_PROGRESS或者TEXT_PROGRESS|
  
 ## 注意
 * []() 一定要将banner的类型设置为TITLE类型以避免一些不必要的逻辑错误
@@ -137,6 +155,11 @@ public void onDestroy(){
 * []() 为了获取更好的视觉效果，当我们使用标题的时候指示器重心将设置在末端
 * []() 支持API 19以及更高版本，因为某些API需要更高的版本支持
  
+ 
+## 更新
+#### v1.5.2:
+* []()因为加载gif的时间可能会有点长，所以考虑加入方法setLoadingProgressType(int type)来设置加载gifs时的加载动画
+* []()一些内存方面的优化和gif下载过程的优化
 # License
       Copyright 2017 AbbyJM
 
