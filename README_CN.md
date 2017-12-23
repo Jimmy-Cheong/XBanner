@@ -22,7 +22,7 @@ dependencies{
 ```   
     
 ## 用法
- #### 一个简单的用法如下所示 //注意，必须在onDestroy()中调用releaseBanner()来释放回调
+ #### 一个简单的用法如下所示 //注意，必须在视图销毁时调用releaseBanner()来释放回调
 ```java
 @Override
 public void onCreate(Bundle savedInstanceState) {
@@ -36,7 +36,7 @@ public void onCreate(Bundle savedInstanceState) {
 @Override
 public void onDestroy(){
 super.onDestroy();     
-xbanner.releaseBanner(); //必须在onDestroy()中调用releaseBanner()
+xbanner.releaseBanner(); //必须在视图销毁时调用releaseBanner()来释放回调
 }
 ```    
    
@@ -57,7 +57,7 @@ List<String> titles=Arrays.asList("This is the picture 1","This is the picture 2
 @Override
 public void onDestroy(){
     super.onDestroy();     
-    xbanner.releaseBanner();// 必须在onDestroy()中调用releaseBanner()
+    xbanner.releaseBanner();// 必须在视图销毁时调用releaseBanner()来释放回调
 }
 ```
       
@@ -94,7 +94,7 @@ xbanner.isAutoPlay(false)
 @Override
 public void onDestroy(){  
    super.onDestroy();  
-    xbanner.releaseBanner();// 一定要在onDestoy()中调用releaseBanner()来释放回调
+    xbanner.releaseBanner();// 必须在视图销毁时调用releaseBanner()来释放回调
 }
 ```
      
@@ -112,7 +112,7 @@ public void onCreate(Bundle savedInstanceState) {
 @Override
 public void onDestroy(){  
    super.onDestroy();  
-    xbanner.releaseBanner();// releaseBanner() must be called in onDestroy()
+    xbanner.releaseBanner();// 必须在视图销毁时调用releaseBanner()来释放回调
 }
 ```
 
@@ -151,7 +151,7 @@ public void onDestroy(){
 * []() 一定要在图片设置完之前调用setImageScaleType
 * []() 必须设置一个Imageloader如果当前加载的图片来自于网络，但是如果加载的是git图片，可以不设置，将使用内置的加载器
 * []() 一定要调用asGif()如果当前加载的图片是gif图片 
-* []() 一定要在onDestroy()中调用releaseBanner()来释放回调
+* []() 必须在视图销毁时调用releaseBanner()来释放回调
 * []() 为了获取更好的视觉效果，当我们使用标题的时候指示器重心将设置在末端
 * []() 支持API 19以及更高版本，因为某些API需要更高的版本支持
  
