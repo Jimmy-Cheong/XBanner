@@ -26,7 +26,7 @@ dependencies{
 ```
     
 ## Usage
- #### A simple way to use XBanner is like below. releaseBanner() must be called in onDestroy()
+ #### A simple way to use XBanner is like below. releaseBanner() must be called when the view is destroying
 
 ```java
 @Override
@@ -41,7 +41,7 @@ public void onCreate(Bundle savedInstanceState) {
 @Override
 public void onDestroy(){
 super.onDestroy();     
-xbanner.releaseBanner(); //releaseBanner() must be called in onDestroy()
+xbanner.releaseBanner(); // releaseBanner() must be called when the view is destroying
 }
 ```    
    
@@ -62,7 +62,7 @@ List<String> titles=Arrays.asList("This is the picture 1","This is the picture 2
 @Override
 public void onDestroy(){
     super.onDestroy();     
-    xbanner.releaseBanner();// releaseBanner() must be called in onDestroy()
+    xbanner.releaseBanner();// releaseBanner() must be called when the view is destroying
 }
 ```
       
@@ -100,7 +100,7 @@ xbanner.isAutoPlay(false)
 @Override
 public void onDestroy(){  
    super.onDestroy();  
-    xbanner.releaseBanner();// releaseBanner() must be called in onDestroy()
+    xbanner.releaseBanner();// releaseBanner() must be called when the view is destroying
 }
 ```
 
@@ -117,7 +117,7 @@ public void onCreate(Bundle savedInstanceState) {
 @Override
 public void onDestroy(){  
    super.onDestroy();  
-    xbanner.releaseBanner();// releaseBanner() must be called in onDestroy()
+    xbanner.releaseBanner();// releaseBanner() must be called when the view is destroying
 }
 ```
      
