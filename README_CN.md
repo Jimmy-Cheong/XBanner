@@ -13,7 +13,7 @@ XBanner是一个支持无限轮播的广告插件，主要通过viewpager实现�
 ## Gradle 
 ```java
 dependencies{
-  compile 'com.abby.app:xbanner:1.5.2' //最新版本
+  compile 'com.abby.app:xbanner:1.5.3' //最新版本
   
   //非常感谢 koral--的android-gif-drawable,这是一个高性能的gif加载依赖库
   //使用这个库的原因是ImageView配合Glide加载gif图片的性能并不是很好
@@ -149,7 +149,7 @@ public void onDestroy(){
 ## 注意
 * []() 一定要将banner的类型设置为TITLE类型以避免一些不必要的逻辑错误
 * []() 一定要在图片设置完之前调用setImageScaleType
-* []() 必须设置一个Imageloader如果当前加载的图片来自于网络，但是如果加载的是git图片，可以不设置，将使用内置的加载器
+* []() 必须设置一个Imageloader如果当前加载的图片来自于网络，但是如果加载的是gif图片，可以不设置，将使用内置的加载器
 * []() 一定要调用asGif()如果当前加载的图片是gif图片 
 * []() 必须在视图销毁时调用releaseBanner()来释放回调
 * []() 为了获取更好的视觉效果，当我们使用标题的时候指示器重心将设置在末端
@@ -160,6 +160,10 @@ public void onDestroy(){
 #### v1.5.2:
 * []()因为加载gif的时间可能会有点长，所以考虑加入方法setLoadingProgressType(int type)来设置加载gifs时的加载动画
 * []()一些内存方面的优化和gif下载过程的优化
+
+#### v1.5.3:
+* []()解决gif可能无法显示的问题
+
 # License
       Copyright 2017 AbbyJM
 
