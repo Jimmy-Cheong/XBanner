@@ -151,6 +151,7 @@ public void onDestroy(){
 |setLoadingProgressType|set a progress view when loading gifs|CIRCLE_PROGRESS or TEXT_PROGRESS|
  
 ## Notice
+* []() if the images do not display,check out your network permission and your image if they are configured correctly
 * []() must set the banner type to TITLE TYPE when we set titles to avoid some logic errors
 * []() setImageScaleType must be called before we set the images
 * []() set an ImageLoader when loading images from url,but if you are loading gifs,you don't really have to 
