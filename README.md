@@ -17,7 +17,7 @@ A banner for showing Ads with the Viewpager and supports automatic play in an in
 ```java
 dependencies{
 
-  compile 'com.abby.app:xbanner:1.5.2' //the latest version
+  compile 'com.abby.app:xbanner:1.5.3' //the latest version
   
   //Thans koral-- for android-gif-drawable,it's a good solution for showing gif images.It is high performance.
   //Instead of using ImageView+Glide,we use gif-drawable for better performance
@@ -164,7 +164,9 @@ public void onDestroy(){
 #### v1.5.2:
 * []() new method setLoadingProgressType(int type) to apply a progress view when loading gifs,while it needs a long time load gifs.
 * []() optimize the momory consumption and the process of downloading gifs
-
+ 
+#### v1.5.3:
+* []() fix a problem that the gif may not be displayed correctly
 # License
       Copyright 2017 AbbyJM
 
