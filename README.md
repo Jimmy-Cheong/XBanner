@@ -157,13 +157,14 @@ public void onDestroy(){
 * []() must call asGif() after you set the Url with setImageUrls method when loading gif,no need to set an ImageLoader if so
 * []() must call releaseBanner() in onDestroy()
 * []() to get a better visaul effect,indicator gravity is set to END when in TITLE mode
+* []() just confirm that your gif is in a correct format when you are downloading gif,or it won't be displayed
 * []() supports API 19 and above
 
 
 ## Update
 #### v1.5.2:
 * []() new method setLoadingProgressType(int type) to apply a progress view when loading gifs,while it needs a long time load gifs.
-* []() optimize the momory consumption and the process of downloading gifs
+* []() optimize the memory consumption and the process of downloading gifs
  
 #### v1.5.3:
 * []() fix a problem that the gif may not be displayed correctly
