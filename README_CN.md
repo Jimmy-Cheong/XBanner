@@ -147,12 +147,14 @@ public void onDestroy(){
 |setLoadingProgressType|设置加载gif图片时的加载动画|CIRCLE_PROGRESS或者TEXT_PROGRESS|
  
 ## 注意
+* []() 如果图片无法显示，请首先检查权限设置，然后确认图片是否可用
 * []() 一定要将banner的类型设置为TITLE类型以避免一些不必要的逻辑错误
 * []() 一定要在图片设置完之前调用setImageScaleType
 * []() 必须设置一个Imageloader如果当前加载的图片来自于网络，但是如果加载的是gif图片，可以不设置，将使用内置的加载器
 * []() 一定要调用asGif()如果当前加载的图片是gif图片 
 * []() 必须在视图销毁时调用releaseBanner()来释放回调
 * []() 为了获取更好的视觉效果，当我们使用标题的时候指示器重心将设置在末端
+* []() 当您加载gif的时候请确保使用正确的gif图片，否则可能无法显示
 * []() 支持API 19以及更高版本，因为某些API需要更高的版本支持
  
  
