@@ -13,7 +13,7 @@ XBanner是一个支持无限轮播的广告插件，主要通过viewpager实现�
 ## Gradle 
 ```java
 dependencies{
-  compile 'com.abby.app:xbanner:1.5.3' //最新版本
+  compile 'com.abby.app:xbanner:1.5.4' //最新版本
   
   //非常感谢 koral--的android-gif-drawable,这是一个高性能的gif加载依赖库
   //使用这个库的原因是ImageView配合Glide加载gif图片的性能并不是很好
@@ -145,7 +145,7 @@ public void onDestroy(){
 |autoDeleteGifCache|当达到一个阈值时自动清除gif缓存|int sizeInMB|
 |start|banner开始播放,***一定要调用这个方法来开始播放***|不需要参数|
 |setLoadingProgressType|设置加载gif图片时的加载动画|CIRCLE_PROGRESS或者TEXT_PROGRESS|
- 
+|notifyDataSetChanged|在重新调用setImageUrls或setImageRes后调用，可以在运行时刷新数据|no params|
 ## 注意
 * []() 如果图片无法显示，请首先检查权限设置，然后确认图片是否可用
 * []() 一定要将banner的类型设置为TITLE类型以避免一些不必要的逻辑错误
@@ -155,6 +155,7 @@ public void onDestroy(){
 * []() 必须在视图销毁时调用releaseBanner()来释放回调
 * []() 为了获取更好的视觉效果，当我们使用标题的时候指示器重心将设置在末端
 * []() 当您加载gif的时候请确保使用正确的gif图片，否则可能无法显示
+* []() 可以通过调用notifyDataSetChanged来通知xbanner数据更新，此时也应该同时设置新的bannerPageListener来获取正确的响应，因为listener基于viewpager的位置而不是图片本身设定
 * []() 支持API 19以及更高版本，因为某些API需要更高的版本支持
  
  
@@ -166,6 +167,8 @@ public void onDestroy(){
 #### v1.5.3:
 * []()解决gif可能无法显示的问题
 
+#### v1.5.4:
+* []()支持运行时修改图片来源，可以调用notifyDataSetChanged()来通知xbanner来更新图片来源
 # License
       Copyright 2017 AbbyJM
 
