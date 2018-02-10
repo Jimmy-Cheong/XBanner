@@ -29,11 +29,12 @@ import android.widget.Scroller;
 import android.widget.TextView;
 
 
-import java.io.File;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -247,10 +248,6 @@ public class XBanner extends RelativeLayout{
 
         mProgressType=CIRCLE_PROGRESS;
 
-
-
-
-
     }
 
     private void initView(){
@@ -412,7 +409,13 @@ public class XBanner extends RelativeLayout{
     }
 
 
+    /**
+     * set the images with the resource ids
+     * @param images the resource ids to be applied
+     */
     public XBanner setImageRes(int[] images){
+
+        mBannerImages.clear();
 
         mImageCount=images.length;
         if(mImageCount>1){
@@ -424,6 +427,7 @@ public class XBanner extends RelativeLayout{
         }else {
             mBannerImages.add(newImageFromRes(images[0]));
         }
+
 
         return this;
     }
@@ -473,19 +477,18 @@ public class XBanner extends RelativeLayout{
 
 
     public XBanner setImageUrls(List<String> urls){
+
         mUrls.clear();
+        mBannerImages.clear();
+        mImageCount=urls.size();
+
         mUrls.addAll(urls);
-        if(mImageCount==0){
-            mImageCount=urls.size();
-        }
-        return this;
-    }
-
-
-    public XBanner setImageFiles(List<File> imageFiles){
 
         return this;
     }
+
+
+
 
     public XBanner setImageResAndTitles(int[] imageRes,List<String> titles){
         setImageRes(imageRes);
@@ -671,7 +674,7 @@ public class XBanner extends RelativeLayout{
 
     private void initViewPagerAdapter(){
 
-        mAdapter= new XBPagerAdapter(mBannerPageListner,mBannerImages);
+        mAdapter= new XBPagerAdapter(mBannerPageListner,mBannerImages,mImageCount);
 
         mViewPager.setAdapter(mAdapter);
         //mAdapter.setData(mBannerImages);
@@ -681,7 +684,6 @@ public class XBanner extends RelativeLayout{
             mViewPager.setCurrentItem(0);
             mSelectedIndex=0;
         }
-
 
 
         if(mViewPageTransformer!=null){
@@ -748,8 +750,11 @@ public class XBanner extends RelativeLayout{
 
                     int current=mViewPager.getCurrentItem();
 
+
                     switch (state){
+
                         case ViewPager.SCROLL_STATE_DRAGGING:
+
                             if(mBannerPageListner!=null){
                                 mBannerPageListner.onBannerDragging(current);
                             }
@@ -762,8 +767,10 @@ public class XBanner extends RelativeLayout{
                             if(current==mImageCount+1){
                                 mViewPager.setCurrentItem(1,false);
                             }
+
                             break;
                         case ViewPager.SCROLL_STATE_IDLE:
+
                             if(mBannerPageListner!=null){
                                 mBannerPageListner.onBannerIdle(current);
                             }
@@ -780,6 +787,7 @@ public class XBanner extends RelativeLayout{
                         default:
                             break;
                     }
+
                 }
             };
 
@@ -864,7 +872,6 @@ public class XBanner extends RelativeLayout{
         showIndicators();
         applyViewPagerAdapterListener();
         startPlayIfNeeded();
-
     }
 
 
@@ -916,7 +923,6 @@ public class XBanner extends RelativeLayout{
             @Override
             public void showProgress(final int index, final int progress) {
 
-
                 //we need to update view in the main thread
                 if(index==mSelectedIndex){
                     if(mProgressType==TEXT_PROGRESS){
@@ -957,6 +963,29 @@ public class XBanner extends RelativeLayout{
     }
 
 
+    /**
+     * notify xbanner when the data set is changed
+     */
+    public XBanner notifyDataSetChanged(){
+
+        mRunnable.resetImagecount(mImageCount);
+
+        if(mBannerImages.isEmpty()) {
+            loadFromUrlsIfNeeded();
+        }
+
+
+        //we have to recreate the adapter and apply it,or it does not work correctly
+        mAdapter= new XBPagerAdapter(mBannerPageListner,mBannerImages,mImageCount);
+        mViewPager.setAdapter(mAdapter);
+        mViewPager.setCurrentItem(1);
+
+        mIndicatorContainer.removeAllViews();
+        mIndicators.clear();
+        showIndicators();
+
+        return this;
+    }
 
     /**
      * check the number of titles and images
@@ -983,6 +1012,7 @@ public class XBanner extends RelativeLayout{
             return;
         }
 
+
         if(mBannerImages.isEmpty()&&!mUrls.isEmpty()){
             if(mImageCount>1){
                 mBannerImages.add(mIsGif?newGifFromUrl(mImageCount-1):newImageFroUrl(mImageCount-1));
@@ -998,21 +1028,20 @@ public class XBanner extends RelativeLayout{
 
     }
 
-    private void loadFromFilesIfNeeded(){
-
-
-
-    }
 
 
     /**
      * New an image or gif with the given url
      *@param index the index of the Image
      */
-    private ImageView newImageFroUrl(int index){
+    private ImageView newImageFroUrl(int index) {
         ImageView image=new ImageView(mContext);
         image.setScaleType(mScaleType);
-        mImageLoader.loadImages(mContext,mUrls.get(index),image);
+        try {
+            mImageLoader.loadImages(mContext,mUrls.get(index),image);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
         return image;
     }
 
@@ -1066,6 +1095,7 @@ public class XBanner extends RelativeLayout{
             if(count>1){
                 if(mViewPager.get()!=null){
                     int current=mViewPager.get().getCurrentItem();
+
                     if(current==count+1){
                         mViewPager.get().setCurrentItem(1,false);
                         mHandler.post(this);
@@ -1079,7 +1109,9 @@ public class XBanner extends RelativeLayout{
 
         }
 
-
+        public void resetImagecount(int imagecount){
+            count=imagecount;
+        }
 
     }
 
@@ -1140,7 +1172,6 @@ public class XBanner extends RelativeLayout{
     }
 
 
-
     /**
      * clear cache
      */
@@ -1156,9 +1187,6 @@ public class XBanner extends RelativeLayout{
     public void autoDeleteGifCache(int sizeMB){
         GifDownloader.autoDeleteGifCache(sizeMB);
     }
-
-
-
 
 }
 
