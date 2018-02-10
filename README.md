@@ -17,7 +17,7 @@ A banner for showing Ads with the Viewpager and supports automatic play in an in
 ```java
 dependencies{
 
-  compile 'com.abby.app:xbanner:1.5.3' //the latest version
+  compile 'com.abby.app:xbanner:1.5.4' //the latest version
   
   //Thans koral-- for android-gif-drawable,it's a good solution for showing gif images.It is high performance.
   //Instead of using ImageView+Glide,we use gif-drawable for better performance
@@ -149,7 +149,7 @@ public void onDestroy(){
 |autoDeleteGifCache|automatically delete the cache of gifs when reach the the given size|int sizeInMB|
 |start|start the banner,***must be set to start the banner***|no params|
 |setLoadingProgressType|set a progress view when loading gifs|CIRCLE_PROGRESS or TEXT_PROGRESS|
- 
+|notifyDataSetChanged|refresh data after recalling setImageUrls and setImageRes|no params| 
 ## Notice
 * []() if the images do not display,check out your network permission and your image if they are configured correctly
 * []() must set the banner type to TITLE TYPE when we set titles to avoid some logic errors
@@ -159,6 +159,7 @@ public void onDestroy(){
 * []() must call releaseBanner() in onDestroy()
 * []() to get a better visaul effect,indicator gravity is set to END when in TITLE mode
 * []() just confirm that your gif is in a correct format when you are downloading gif,or it won't be displayed
+* []() when refreshing data at run time,you should call notifyDataSetChanged() and you should reconfig the bannerPageListener because the listener is base on the position not the image itself 
 * []() supports API 19 and above
 
 
@@ -169,6 +170,9 @@ public void onDestroy(){
  
 #### v1.5.3:
 * []() fix a problem that the gif may not be displayed correctly
+
+#### v1.5.4:
+* []() suppot data refresh at runtime,by calling notifyDataSetChanged() you can refresh data after you reset the dataset
 # License
       Copyright 2017 AbbyJM
 
