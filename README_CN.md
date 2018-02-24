@@ -3,7 +3,7 @@ XBanner
 =========
 支持无限轮播的广告插件，提供gif支持。
 ## 简介
-XBanner是一个支持无限轮播的广告插件，主要通过viewpager实现。你可以自定义指示器的风格。XBanner提供了gif支持，为了提供更好的性能，采用了第三方依赖库android-gif-drawable。
+XBanner是一个支持无限轮播的广告控件，主要通过viewpager实现。你可以自定义指示器的风格。XBanner提供了gif支持，为了提供更好的性能，采用了第三方依赖库android-gif-drawable。
 ## 效果
 #### 最终的效果
 <div align=center><img width="316" height="584" src="https://github.com/AbbyJM/XBanner/raw/master/gif/demo1.gif"/></div> 
@@ -13,7 +13,7 @@ XBanner是一个支持无限轮播的广告插件，主要通过viewpager实现�
 ## Gradle 
 ```java
 dependencies{
-  compile 'com.abby.app:xbanner:1.5.4' //最新版本
+  compile 'com.abby.app:xbanner:1.5.5' //最新版本
   
   //非常感谢 koral--的android-gif-drawable,这是一个高性能的gif加载依赖库
   //使用这个库的原因是ImageView配合Glide加载gif图片的性能并不是很好
@@ -155,7 +155,7 @@ public void onDestroy(){
 * []() 必须在视图销毁时调用releaseBanner()来释放回调
 * []() 为了获取更好的视觉效果，当我们使用标题的时候指示器重心将设置在末端
 * []() 当您加载gif的时候请确保使用正确的gif图片，否则可能无法显示
-* []() 可以通过调用notifyDataSetChanged来通知xbanner数据更新，此时也应该同时设置新的bannerPageListener来获取正确的响应，因为listener基于viewpager的位置而不是图片本身设定
+* []() 可以通过调用notifyDataSetChanged来通知xbanner数据更新，此时也应该同时设置新的bannerPageListener来获取正确的响应，因为listener基于viewpager的位置而不是图片本身设定，***gif暂时不能刷新因为重新加载gif将造成巨大的开销***
 * []() 支持API 19以及更高版本，因为某些API需要更高的版本支持
  
  
@@ -167,7 +167,7 @@ public void onDestroy(){
 #### v1.5.3:
 * []()解决gif可能无法显示的问题
 
-#### v1.5.4:
+#### v1.5.5:
 * []()支持运行时修改图片来源，可以调用notifyDataSetChanged()来通知xbanner来更新图片来源
 # License
       Copyright 2017 AbbyJM
