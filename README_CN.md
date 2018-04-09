@@ -148,7 +148,7 @@ public void onDestroy(){
 |notifyDataSetChanged|在重新调用setImageUrls或setImageRes后调用，可以在运行时刷新数据|no params|
 ## 注意
 * []() 如果图片无法显示，请首先检查权限设置，然后确认图片是否可用
-* []() 一定要将banner的类型设置为TITLE类型以避免一些不必要的逻辑错误
+* []() 显示标题时一定要将banner的类型设置为TITLE类型以避免一些不必要的逻辑错误
 * []() 一定要在图片设置完之前调用setImageScaleType
 * []() 必须设置一个Imageloader如果当前加载的图片来自于网络，但是如果加载的是gif图片，可以不设置，将使用内置的加载器
 * []() 一定要调用asGif()如果当前加载的图片是gif图片 
