@@ -173,6 +173,9 @@ public void onDestroy(){
 
 #### v1.5.5:
 * []() suppot data refresh at runtime,by calling notifyDataSetChanged() you can refresh data after you reset the dataset
+
+#### v1.5.6:
+* []() remove the icon configurations in AndroidManifest that may cause problems in devices above android O
 # License
       Copyright 2017 AbbyJM
 
