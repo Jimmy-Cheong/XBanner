@@ -169,6 +169,9 @@ public void onDestroy(){
 
 #### v1.5.5:
 * []()支持运行时修改图片来源，可以调用notifyDataSetChanged()来通知xbanner来更新图片来源
+
+#### v1.5.6:
+* [] ()移除AndroidManifest中的icon设置，在某些AndroidO设备会导致问题
 # License
       Copyright 2017 AbbyJM
 
