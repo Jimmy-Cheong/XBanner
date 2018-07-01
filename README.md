@@ -17,7 +17,7 @@ A banner for showing Ads with the Viewpager and supports automatic play in an in
 ```java
 dependencies{
 
-  compile 'com.abby.app:xbanner:1.5.5' //the latest version
+  compile 'com.abby.app:xbanner:1.5.7' //the latest version
   
   //Thans koral-- for android-gif-drawable,it's a good solution for showing gif images.It is high performance.
   //Instead of using ImageView+Glide,we use gif-drawable for better performance
