@@ -13,7 +13,7 @@ XBanner是一个支持无限轮播的广告控件，主要通过viewpager实现�
 ## Gradle 
 ```java
 dependencies{
-  compile 'com.abby.app:xbanner:1.5.5' //最新版本
+  compile 'com.abby.app:xbanner:1.5.7' //最新版本
   
   //非常感谢 koral--的android-gif-drawable,这是一个高性能的gif加载依赖库
   //使用这个库的原因是ImageView配合Glide加载gif图片的性能并不是很好
